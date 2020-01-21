@@ -1,7 +1,7 @@
 // Create a set of random logs with varied timestamps.
 // Format: [timestamp] - [<request method>] - [<gibberish>]
 
-package setup
+package main
 
 import (
 	"fmt"
