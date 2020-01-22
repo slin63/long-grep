@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net"
@@ -15,6 +16,18 @@ type Logly struct {
 
 // GetLogs returns all the logs for this server.
 func (l *Logly) GetLogs(yes int, logs *string) error {
+	b, err := ioutil.ReadFile((*l).logFile)
+	if err != nil {
+		return err
+	}
+
+	*logs = string(b)
+	return nil
+}
+
+// GrepLogs greps logs and returns the corresponding results.
+func (l *Logly) GrepLogs(pattern string, logs *string) error {
+	fmt.Println(pattern)
 	b, err := ioutil.ReadFile((*l).logFile)
 	if err != nil {
 		return err

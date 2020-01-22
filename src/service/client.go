@@ -10,7 +10,7 @@ import (
 )
 
 // Client for querying.
-func Client() {
+func Client(expressionPtr *string) {
 	var wg sync.WaitGroup
 
 	addresses, err := config.Addresses()
@@ -22,13 +22,13 @@ func Client() {
 	for _, address := range addresses {
 		log.Println(address)
 		wg.Add(1)
-		go getLogs(address, &wg)
+		go grepLogs(address, expressionPtr, &wg)
 	}
 
 	wg.Wait()
 }
 
-func getLogs(address string, wg *sync.WaitGroup) string {
+func grepLogs(address string, expressionPtr *string, wg *sync.WaitGroup) string {
 	defer wg.Done()
 	log.Println("Dispatching RPC for", address)
 	var logs string
@@ -37,7 +37,6 @@ func getLogs(address string, wg *sync.WaitGroup) string {
 		log.Fatal(err)
 	}
 
-	client.Call("Logly.GetLogs", 1, &logs)
-	fmt.Println(logs)
+	client.Call("Logly.GrepLogs", *expressionPtr, &logs)
 	return logs
 }

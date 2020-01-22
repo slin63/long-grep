@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"regexp"
 
 	"./service"
 	"./setup"
@@ -19,11 +20,8 @@ func main() {
 		fmt.Sprintf("machine.%s.log", os.Getenv("MACHINEID")),
 		"name of the generated log file",
 	)
-	// configFilePtr := flag.String("config", "", "Location of Config File")
 
 	flag.Parse()
-
-	// os.Setenv("CONFIG", *configFilePtr)
 
 	switch {
 	case *isServerPtr:
@@ -31,16 +29,17 @@ func main() {
 		service.Server(*lognamePtr)
 
 	case *isClientPtr:
-		// 	if *expressionPtr == "" {
-		// 		log.Fatalln("Must specify expression if using as a client")
-		// 	}
-		// 	_, err := regexp.Compile(*expressionPtr)
-		// 	if err != nil {
-		// 		log.Fatalln(err)
-		// 	}
-		// 	service.Client(*expressionPtr)
+		if *expressionPtr == "" {
+			log.Fatalln("Must specify expression if using as a client")
+		}
+		// Validate the regular expression
+		_, err := regexp.Compile(*expressionPtr)
+		if err != nil {
+			log.Fatalln(err)
+		}
 		log.Println(*expressionPtr)
-		service.Client()
+
+		service.Client(expressionPtr)
 	default:
 		log.Fatalln("Usage: main [-client] [-server] [--expression=<regular expression>]")
 	}
