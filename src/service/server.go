@@ -1,12 +1,13 @@
 package service
 
 import (
-	"fmt"
 	"io/ioutil"
 	"log"
 	"net"
 	"net/http"
 	"net/rpc"
+
+	"../finder"
 )
 
 // Logly is a type that implements the Retrieve() "method"
@@ -26,14 +27,9 @@ func (l *Logly) GetLogs(yes int, logs *string) error {
 }
 
 // GrepLogs greps logs and returns the corresponding results.
-func (l *Logly) GrepLogs(pattern string, logs *string) error {
-	fmt.Println(pattern)
-	b, err := ioutil.ReadFile((*l).logFile)
-	if err != nil {
-		return err
-	}
+func (l *Logly) GrepLogs(expression string, results *string) error {
+	*results = finder.Find((*l).logFile, expression)
 
-	*logs = string(b)
 	return nil
 }
 

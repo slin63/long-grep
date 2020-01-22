@@ -9,7 +9,10 @@ import (
 	"../config"
 )
 
-// Client for querying.
+// TODO
+// - Add timeout for dead machines
+
+// Client for querying logs
 func Client(expressionPtr *string) {
 	var wg sync.WaitGroup
 
@@ -38,5 +41,6 @@ func grepLogs(address string, expressionPtr *string, wg *sync.WaitGroup) string 
 	}
 
 	client.Call("Logly.GrepLogs", *expressionPtr, &logs)
+	log.Println("done:", address, len(logs))
 	return logs
 }
