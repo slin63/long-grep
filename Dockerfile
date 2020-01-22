@@ -1,11 +1,9 @@
 FROM golang:alpine
-ENV MACHINEID 0
+ENV MACHINEID=0 CONFIG="config.json"
 
 RUN mkdir /app
 ADD . /app/
 WORKDIR /app
-RUN go build -o gen-logs cmd/setup/main.go
-RUN go build -o serve cmd/server/main.go
-RUN ./gen-logs machine.${MACHINEID}.log
+RUN go build -o main src/main.go
 
-CMD ["sh", "-c", "./serve machine.${MACHINEID}.log"]
+CMD ["sh", "-c", "./main -server"]
