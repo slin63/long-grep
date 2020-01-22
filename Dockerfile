@@ -5,6 +5,7 @@ RUN mkdir /app
 ADD . /app/
 WORKDIR /app
 RUN go build -o gen-logs cmd/setup/main.go
+RUN go build -o serve cmd/server/main.go
+RUN ./gen-logs machine.${MACHINEID}.log
 
-# TODO: Remove ls
-CMD ["sh", "-c", "./gen-logs machine.${MACHINEID}.log && ls"]
+CMD ["sh", "-c", "./serve machine.${MACHINEID}.log"]
