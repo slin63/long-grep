@@ -1,0 +1,22 @@
+version: '3'
+services:
+  machine1:
+    environment:
+      - MACHINEID=1
+    build: .
+  machine2:
+    environment:
+      - MACHINEID=2
+    build: .
+  machine3:
+    environment:
+      - MACHINEID=3
+    build: .
+  machine4:
+    environment:
+      - MACHINEID=4
+    build: .
+  machine5:
+    environment:
+      - MACHINEID=5
+    build: .
