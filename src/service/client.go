@@ -15,7 +15,6 @@ import (
 // Client for querying logs
 func Client(expressionPtr *string) {
 	logs := make(chan string)
-	results := make(chan string)
 	var wg sync.WaitGroup
 
 	addresses, err := config.Addresses()
@@ -29,21 +28,19 @@ func Client(expressionPtr *string) {
 		wg.Add(1)
 		go grepLogs(address, expressionPtr, &wg, logs)
 	}
-	go compileLogs(logs, results)
 
-	wg.Wait()
-	close(logs)
-	fmt.Println(<-results)
-}
+	go func() {
+		wg.Wait()
+		close(logs)
+	}()
 
-func compileLogs(logs, results chan string) {
-	var compiled, log string
-	ok := true
-	for ok {
-		log, ok = <-logs
-		compiled += log
+	counter := 0
+	for msg := range logs {
+		fmt.Println(msg)
+		counter++
 	}
-	results <- compiled
+
+	log.Printf("Received %d messages.", counter)
 }
 
 func grepLogs(address string, expressionPtr *string, wg *sync.WaitGroup, logs chan string) {
@@ -52,10 +49,11 @@ func grepLogs(address string, expressionPtr *string, wg *sync.WaitGroup, logs ch
 	var reply string
 	client, err := rpc.DialHTTP("tcp", address)
 	if err != nil {
-		log.Fatal(err)
+		log.Println("Error - GrepLogs:", err)
+	} else {
+		client.Call("Logly.GrepLogs", *expressionPtr, &reply)
+		log.Println("done:", address, len(reply))
+		logs <- reply
 	}
 
-	client.Call("Logly.GrepLogs", *expressionPtr, &reply)
-	log.Println("done:", address, len(reply))
-	logs <- reply
 }
