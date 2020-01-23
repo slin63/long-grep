@@ -8,5 +8,5 @@ Based on this UIUC425 MP: https://courses.engr.illinois.edu/cs425/fa2019/MP1.CS4
    distinct port address.
       - `docker-compose up`
       - If you've changed the `dockerfile`, run `docker-compose build` to rebuild the images used for `docker-compose`.
-2. Exec into any of those 5 remote servers.
-      - `docker exec -it <container_name> /bin/sh`
+2. Build the client and execute the grep with any arbitrary pattern.
+      - `CONFIG=./config.json go run src/main.go -client --expression "include (straight|terrible)"`
