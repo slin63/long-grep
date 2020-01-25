@@ -2,9 +2,7 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"log"
-	"os"
 	"regexp"
 
 	"./service"
@@ -14,23 +12,25 @@ import (
 func main() {
 	isClientPtr := flag.Bool("client", false, "configure process as client")
 	isServerPtr := flag.Bool("server", false, "configure process as server")
+	generateLogs := flag.Bool("generate", false, "generate logs at each server")
 	expressionPtr := flag.String("expression", "", "regular expression")
-	lognamePtr := flag.String(
-		"logname",
-		fmt.Sprintf("machine.%s.log", os.Getenv("MACHINEID")),
-		"name of the generated log file",
-	)
+	lognamePtr := flag.String("logname", "", "name of the log file to grep")
 
 	flag.Parse()
 
 	switch {
 	case *isServerPtr:
-		setup.Setup(*lognamePtr)
+		if *generateLogs {
+			setup.Setup(*lognamePtr)
+		}
 		service.Server(*lognamePtr)
 
 	case *isClientPtr:
 		if *expressionPtr == "" {
 			log.Fatalln("Must specify expression if using as a client")
+		}
+		if *lognamePtr == "" {
+			log.Fatalln("Must specify logname if using as a client")
 		}
 		// Validate the regular expression
 		_, err := regexp.Compile(*expressionPtr)
@@ -41,6 +41,6 @@ func main() {
 
 		service.Client(expressionPtr)
 	default:
-		log.Fatalln("Usage: main [-client] [-server] [--expression=<regular expression>]")
+		log.Fatalln("Usage: main [-client] [-server] [-generate] [--logname=<name of log file>] [--expression=<regular expression>]")
 	}
 }
